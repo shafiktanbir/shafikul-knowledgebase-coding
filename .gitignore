@@ -1,0 +1,15 @@
+# Graphify output (generated, symlinked from parent monorepo - not portable)
+graphify-out/
+graph.json
+GRAPH_REPORT.md
+GRAPH_TREE.html
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
