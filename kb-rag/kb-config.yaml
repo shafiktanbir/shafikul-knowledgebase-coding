@@ -1,0 +1,76 @@
+# KB-RAG Configuration
+# Markdown files stay as the canonical source of truth.
+# Vector indexes are derived artifacts stored under .ai/indexes/.
+
+# Root directory of the Markdown knowledge base (relative to this config file
+# or absolute path). The scanner walks this directory recursively.
+knowledge_base_path: "../"
+
+# Directory where model-isolated vector indexes are stored.
+# Each model gets: .ai/indexes/<model-name>/chunking-<version>/
+indexes_path: "../.ai/indexes"
+
+# Paths/patterns to EXCLUDE when scanning for Markdown files.
+# Uses glob-style matching relative to knowledge_base_path.
+exclude_patterns:
+  - ".ai/**"
+  - ".git/**"
+  - "graphify-out/**"
+  - "kb-rag/**"
+  - "node_modules/**"
+  - "**/.DS_Store"
+
+# ---------------------------------------------------------------------------
+# Embedding models
+# Each entry defines a named alias usable via --model <alias>
+# ---------------------------------------------------------------------------
+embedding_models:
+
+  gemini:
+    provider: gemini
+    model: text-embedding-004
+    dimensions: 768
+    task_type: RETRIEVAL_DOCUMENT   # used at index time
+    query_task_type: RETRIEVAL_QUERY # used at query time
+
+  openai-small:
+    provider: openai
+    model: text-embedding-3-small
+    dimensions: 1536
+
+  openai-large:
+    provider: openai
+    model: text-embedding-3-large
+    dimensions: 3072
+
+# ---------------------------------------------------------------------------
+# Chunking configuration
+# Changing any value here increments the effective chunking version,
+# which forces a new isolated index directory (chunking-v2, etc.)
+# ---------------------------------------------------------------------------
+chunking:
+  version: v1
+  strategy: markdown_headers     # split on ## / ### headers, then by size
+  chunk_size: 512                # target tokens per chunk
+  chunk_overlap: 64              # token overlap between consecutive chunks
+  min_chunk_size: 50             # discard chunks smaller than this
+
+# ---------------------------------------------------------------------------
+# LLM configuration (used only for kb ask — independent of embedding model)
+# ---------------------------------------------------------------------------
+llm:
+  provider: gemini
+  model: gemini-1.5-flash-latest
+  temperature: 0.2
+  max_tokens: 2048
+  system_prompt: |
+    You are a precise technical assistant. Answer the user's question using ONLY
+    the provided context chunks from the knowledge base. If the context is
+    insufficient, say so explicitly. Do not hallucinate facts.
+
+# ---------------------------------------------------------------------------
+# Retrieval settings
+# ---------------------------------------------------------------------------
+retrieval:
+  top_k: 8           # number of chunks returned from vector search
+  distance_metric: cosine

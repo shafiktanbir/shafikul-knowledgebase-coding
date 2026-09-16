@@ -4,6 +4,19 @@ graph.json
 GRAPH_REPORT.md
 GRAPH_TREE.html
 
+# Vector indexes — derived artifacts, always rebuildable from Markdown source
+# NEVER store these in git. They are local-only.
+.ai/indexes/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+dist/
+build/
+
 # OS files
 .DS_Store
 Thumbs.db
