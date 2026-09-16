@@ -40,11 +40,18 @@ class GeminiEmbeddingProvider(EmbeddingProvider):
 
         # Resolve API key: GEMINI_API_KEY > GOOGLE_API_KEY > ADC
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        if api_key:
-            self._client = genai.Client(api_key=api_key)
-        else:
-            # Use Application Default Credentials (Antigravity/gcloud)
-            self._client = genai.Client()
+        try:
+            if api_key:
+                self._client = genai.Client(api_key=api_key)
+            else:
+                self._client = genai.Client()
+        except Exception as exc:
+            raise EnvironmentError(
+                "Gemini API key is required for local CLI indexing.\n"
+                "Please add your free GEMINI_API_KEY to kb-rag/.env or export it in your shell:\n"
+                "  export GEMINI_API_KEY=\"AIzaSy...\"\n"
+                "You can get a free key at: https://aistudio.google.com/apikey"
+            ) from exc
 
     def embed(self, text: str) -> list[float]:
         """Embed a single text string."""

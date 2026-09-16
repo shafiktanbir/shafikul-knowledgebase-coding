@@ -79,11 +79,11 @@ def cmd_index(model: str, json_output: bool) -> None:
 
     try:
         model_cfg = config.get_model_config(model)
-    except KeyError as exc:
+        provider = build_provider(model_cfg, for_query=False)
+    except (KeyError, EnvironmentError) as exc:
         console.print(f"[red]Error:[/] {exc}")
         sys.exit(1)
 
-    provider = build_provider(model_cfg, for_query=False)
     index, index_dir = _get_index(config, model)
 
     # Write metadata.json before indexing
@@ -258,7 +258,12 @@ def cmd_rebuild(model: str, yes: bool) -> None:
             console.print("[dim]Cancelled.[/]")
             return
 
-    provider = build_provider(model_cfg, for_query=False)
+    try:
+        provider = build_provider(model_cfg, for_query=False)
+    except (KeyError, EnvironmentError) as exc:
+        console.print(f"[red]Error:[/] {exc}")
+        sys.exit(1)
+
     index, _ = _get_index(config, model)
 
     console.print(f"\n[bold red]Clearing index[/] for [bold]{model}[/]...")
@@ -327,7 +332,12 @@ def cmd_search(model: str, top_k: int, json_output: bool, query: str) -> None:
         console.print(f"[red]Index not built yet.[/] Run: kb index --model {model}")
         sys.exit(1)
 
-    provider = build_provider(model_cfg, for_query=True)
+    try:
+        provider = build_provider(model_cfg, for_query=True)
+    except (KeyError, EnvironmentError) as exc:
+        console.print(f"[red]Error:[/] {exc}")
+        sys.exit(1)
+
     index.initialize(provider.get_dimensions())
 
     results = search(query=query, provider=provider, index=index, top_k=top_k)
@@ -405,7 +415,15 @@ def cmd_ask(model: str, top_k: int, show_sources: bool, json_output: bool, quest
         sys.exit(1)
 
     # Build query-time embedding provider (RETRIEVAL_QUERY task type for Gemini)
-    query_provider = build_provider(model_cfg, for_query=True)
+    try:
+        query_provider = build_provider(model_cfg, for_query=True)
+    except (KeyError, EnvironmentError) as exc:
+        if json_output:
+            print(json.dumps({"error": str(exc)}))
+        else:
+            console.print(f"[red]Error:[/] {exc}")
+        sys.exit(1)
+
     index.initialize(query_provider.get_dimensions())
 
     # Retrieve relevant chunks
@@ -444,9 +462,15 @@ Answer based strictly on the context above. Cite the source files when relevant.
     if not json_output:
         console.print(f"[bold cyan]Generating answer[/] with {config.llm.get('model', 'gemini')}...\n")
 
-    llm = build_llm_provider(config.llm)
     try:
+        llm = build_llm_provider(config.llm)
         answer = llm.generate(system_prompt=system_prompt, user_prompt=user_prompt)
+    except (KeyError, EnvironmentError) as exc:
+        if json_output:
+            print(json.dumps({"error": str(exc), "context": context}))
+        else:
+            console.print(f"[red]Error:[/] {exc}")
+        sys.exit(1)
     except Exception as exc:  # noqa: BLE001
         if json_output:
             print(json.dumps({"error": str(exc), "context": context}))

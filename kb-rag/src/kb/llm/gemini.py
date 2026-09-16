@@ -31,10 +31,18 @@ class GeminiLLMProvider(LLMProvider):
         self._max_tokens = max_tokens
 
         api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
-        if api_key:
-            self._client = genai.Client(api_key=api_key)
-        else:
-            self._client = genai.Client()
+        try:
+            if api_key:
+                self._client = genai.Client(api_key=api_key)
+            else:
+                self._client = genai.Client()
+        except Exception as exc:
+            raise EnvironmentError(
+                "Gemini API key is required for LLM generation.\n"
+                "Please add your free GEMINI_API_KEY to kb-rag/.env or export it in your shell:\n"
+                "  export GEMINI_API_KEY=\"AIzaSy...\"\n"
+                "You can get a free key at: https://aistudio.google.com/apikey"
+            ) from exc
 
     def generate(self, system_prompt: str, user_prompt: str) -> str:
         """Generate a response using Gemini."""
