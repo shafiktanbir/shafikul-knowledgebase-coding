@@ -29,6 +29,7 @@ flowchart TD
 * **FusionAuth SSO Integration:** Centralized identity hub across practice management subdomains (`/s/[subdomain]`).
 * **Multi-Clinic Role Junction Table (`user_clinic_roles`):** Replaced legacy `users.clinic_id` & `users.role_id` (Migration `00096`).
 * **Dynamic RBAC Permission Overrides (`user_permission_overrides`):** Fine-grained per-user, per-clinic permission grants/denials (Migration `00103`).
+* **Identity Resolution & Tenant Context Preservation (`src/middleware/auth.ts`):** Middleware ensures database clinic membership (`user_clinic_roles`) and active subdomain context strictly supersede raw JWT claims. Eliminates stale token claim overwrites, preserving `req.user.clinicId` and `activeClinicId` across multi-tenant switches.
 
 ---
 
@@ -51,6 +52,8 @@ flowchart TD
 * **Core Schemas:** `data_migration_jobs`, `migration_entity_mappings`, `patient_charts`, `patient_documents`.
 * **Universal Practitioner Detection (ADR-008):** 4-pillar cross-file heuristics across `Appointments.csv`, `Notes_Report.csv`, and `Patients.csv` (`Referred To`). Deduces supervising doctors, associate clinicians, clinical assistants (SLPAs/BIs), and administrative staff across arbitrary medical disciplines, stripping Jane asterisks (`*`) and extracting regulatory licenses (`R-SLP`, `BCBA`, `MD`).
 * **Performance & TOAST Pruning (ADR-008):** Bypasses out-of-line JSONB TOAST storage in summary queries (`dataMigration.repository.ts`), cutting rollback tab latency from **1,515ms to 303ms (5x faster)**, paired with client `sessionStorage` SWR hydration for 0ms instant render.
+* **Practitioner Email Setup Workflow:** Owner-permission bypass and email service trigger (`POST /api/practitioners/:id/send-password-setup`) enabling owners to update empty-email staff records imported from Jane and dispatch password setup invitations.
+* **Granular 72-Hour Rollback & Re-Migration Deduplication:** 3-stage WAN-pipelined reversal engine in `janeBatchWorker.ts` backed by `migration_entity_mappings`. Multi-tier deduplication protects against duplicate re-imports (vectorized `janeGuid` & email lookup + 3-tier matching engine for patients, first/last name lookup for staff, service name conflict resolution, and appointment schedule overlap protection).
 
 ## 📦 5. Subscription Package Control & Feature Gating (Item 19)
 * **Architectural Decision:** Subscription package feature gating is managed exclusively at the **Application Layer** (`requirePlanFeature('memberships')` middleware).
@@ -67,10 +70,25 @@ flowchart TD
 * **Asynchronous Export Pipeline:** BullMQ + Redis background worker streaming QuickBooks/Xero compliant CSV/PDF reports with 24-hour tokenized download links.
 * **Operational Execution (Developer B):** Dedicated claims adjudication and provincial CSV batch export (BC MCFD / AccessOAP) via [`accounts-receivable-and-claims-export-team-breakdown.md`](file:///home/shafikul/Documents/office_work/clinic-app/ai-toolkit/accounts-receivable-and-claims-export-team-breakdown.md).
 
+## 🧪 7. Operational Practice Lifecycle & Visual Testing Architecture (ADR-010)
+* **Testing Stack:** Playwright sequentially driven (`workers: 1`, `fullyParallel: false`) in `clinic-booking-app-frontend/e2e-visual-testing/` with automated visual milestone captures in `reports/artifacts/`.
+* **Sequential 9-Phase Verification Pipeline:**
+  1. *Clinic Registration & Onboarding:* Subdomain uniqueness checks (`/api/clinics/check-subdomain`) and isolated tenant registration.
+  2. *Tenant Gateway & Branding:* Subdomain route resolution (`/s/:subdomain`) and dynamic brand theme loading.
+  3. *Setup & Treatment Catalog:* Branch provisioning and service durations/pricing.
+  4. *Staff & Doctor Onboarding:* Administrative and practitioner invitations with configured weekly shift hours.
+  5. *Internal Admin Direct Booking:* Administrative calendar appointment scheduling (bypassing public patient booking).
+  6. *Practitioner Calendar Progression:* Real-time appointment status progression (`booked` ➔ `in_progress` ➔ `completed`).
+  7. *Clinical SOAP Charting & Immutability:* Rich SOAP notes with cryptographic SHA-256 digital signature sealing; immutable enforcement (HTTP 403 on mutation).
+  8. *Multi-Payer Split Billing & Invoicing:* Itemized invoices, split allocations, offline payments, and $0.00 zero-balance verification.
+  9. *Multi-Tenant Security Audit:* Cross-tenant header enforcement and CASL RBAC privilege boundary checks.
+
 ---
 
-## 📑 7. Key Documentation & Reference Links
+## 📑 8. Key Documentation & Reference Links
 * 📄 **Master Spec Index:** [`clinic-app/ai-toolkit/AI_TOOLKIT_INDEX.md`](file:///home/shafikul/Documents/office_work/clinic-app/ai-toolkit/AI_TOOLKIT_INDEX.md)
+* 🧪 **Lifecycle Test Spec Blueprint:** [`clinic-app/clinic-booking-app-frontend/e2e-visual-testing/LIFECYCLE_TEST_SPEC.md`](file:///home/shafikul/Documents/office_work/clinic-app/clinic-booking-app-frontend/e2e-visual-testing/LIFECYCLE_TEST_SPEC.md)
+* 📜 **E2E Visual Testing ADR:** [`knowledgebase/01-projects/adr/ADR-010-automated-operational-lifecycle-and-visual-testing-harness.md`](file:///home/shafikul/Documents/coding/research-playground-loop/knowledgebase/01-projects/adr/ADR-010-automated-operational-lifecycle-and-visual-testing-harness.md)
 * 📊 **Reporting & Analytics Epic:** [`clinic-app/ai-toolkit/reporting-and-operational-analytics-epic.md`](file:///home/shafikul/Documents/office_work/clinic-app/ai-toolkit/reporting-and-operational-analytics-epic.md)
 * 📋 **A/R & Claims Developer Breakdown:** [`clinic-app/ai-toolkit/accounts-receivable-and-claims-export-team-breakdown.md`](file:///home/shafikul/Documents/office_work/clinic-app/ai-toolkit/accounts-receivable-and-claims-export-team-breakdown.md)
 * 🎨 **Admin Billing Hub UI Spec:** [`clinic-app/ai-toolkit/admin-billing-hub-ui-ux-team-breakdown.md`](file:///home/shafikul/Documents/office_work/clinic-app/ai-toolkit/admin-billing-hub-ui-ux-team-breakdown.md)

@@ -25,9 +25,11 @@ flowchart TD
 * 🏥 **Clinic App:** [`01-projects/clinic-app/sprint-board.md`](01-projects/clinic-app/sprint-board.md) — Active Sprint Goals, Task Backlog & Jane Migration Progress
 * 🎵 **MusicLoopy Backend:** [`01-projects/musicloopy-backend/sprint-board.md`](01-projects/musicloopy-backend/sprint-board.md) — Active Sprint Board & Task Tracker
 * 🔬 **Research Playground Loop:** [`01-projects/research-playground-loop/sprint-board.md`](01-projects/research-playground-loop/sprint-board.md) — Active Monorepo Sprint Goals & Sub-Projects
-* 📜 **ADR Decision Ledger:** [`01-projects/adr/README.md`](01-projects/adr/README.md) — Index of Architecture Decision Records (ADR-001 through ADR-008)
+* 🌐 **Shafikul Islam Portfolio:** [`01-projects/shafik-portfolio/sprint-board.md`](01-projects/shafik-portfolio/sprint-board.md) — Personal Showcase, Next.js 16 App Router, PostHog Telemetry & Consultation Funnel Tracker
+* 📜 **ADR Decision Ledger:** [`01-projects/adr/README.md`](01-projects/adr/README.md) — Index of Architecture Decision Records (ADR-001 through ADR-016)
 
 ### 📁 `02-areas/` (Technical Domains & Project Architecture)
+* 🌐 **Portfolio Architecture:** [`01-projects/shafik-portfolio/README.md`](01-projects/shafik-portfolio/README.md) — Next.js 16 Turbopack, React 19, MongoDB, Session Replay & Multi-Step Conversion Funnels
 * ⚡ **SignalFlow AI Architecture:** [`01-projects/signalflow-ai/README.md`](01-projects/signalflow-ai/README.md) — 3-Tier Notification Triage, On-Device Local NLP & SaaS Unit Economics
 * 🦔 **PostHog System Architecture:** [`01-projects/posthog/architecture.md`](01-projects/posthog/architecture.md) — Event Ingestion (Rust/Kafka), ClickHouse OLAP, HogQL Engine, PersonHog Identity & 89+ Product Vertical Slices
 * 🏥 **Clinic App Architecture:** [`02-areas/clinic-app/README.md`](02-areas/clinic-app/README.md) — FusionAuth SSO, Multi-Payer Split Billing, Dynamic RBAC, Jane Migration Hub & Reporting Analytics (EPIC-09)
@@ -51,3 +53,5 @@ flowchart TD
 * 🏥 **Clinic App Repository:** `/home/shafikul/Documents/office_work/clinic-app`
 * 🔬 **Research Playground Loop:** `/home/shafikul/Documents/coding/research-playground-loop`
 * 🎵 **MusicLoopy Backend:** `/home/shafikul/Documents/coding/musicloopy-backend`
+* 🌐 **Shafikul Islam Portfolio:** `/home/shafikul/Documents/coding/shafik-protfolio`
+

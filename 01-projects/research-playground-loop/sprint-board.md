@@ -20,6 +20,8 @@
 | `TASK-RPL-01` | Initialize PARA + Diátaxis + ADR Master Knowledge Base | `knowledgebase/` | ✅ Completed |
 | `TASK-RPL-02` | Build `kb-manager` skill for automated chat session updates | `.agents/skills/kb-manager` | ✅ Completed |
 | `TASK-RPL-03` | Connect `knowledgebase/` structure to GitHub repository | `research-playground-loop` | ⏳ Pending |
+| `TASK-RPL-04` | Build `kb-rag-skill` local vector search & LLM query CLI integration | `.agents/skills/kb-rag-skill` | ✅ Completed |
+| `TASK-RPL-05` | Record `ADR-009`: Owner-Only Email Update + FusionAuth SSO Sync | `knowledgebase/01-projects/adr/` | ✅ Completed |
 | `TASK-OS-01` | Build Enterprise Open Source Discovery Engine (`INSTRUCTIONS.md`, `CONFIG.md`, `PLAYBOOK.md`, `TRACKER.md`) | `opensource_project` | ✅ Completed |
 | `TASK-OS-02` | Clone PostHog Monorepo & Configure Git Remotes (`origin` fork + `upstream`) | `opensource_project/posthog` | ✅ Completed |
 | `TASK-OS-03` | Map PostHog Backend Architecture (Django + DRF + Postgres/ClickHouse Hybrid OLTP/OLAP) | `opensource_project/posthog` | ✅ Completed |
@@ -31,7 +33,22 @@
 
 ## 📜 Historical Daily Activity Log
 
-### [2026-09-15]
+### [2026-09-21]
+- **Enterprise Open Source Discovery Engine**: Recovered daily cron daemon after server restart.
+- **Discovery Execution**: Identified and tracked new VC-backed targets: **Supabase** (TypeScript, Go, Postgres), **Keploy** (Go, Python, Node.js), **n8n** (TypeScript, Node.js), **Ollama** (Go), **LangChain** (Python), and **Gastown** (Go).
+- **Generated Daily Digests**: Saved reports to `digests/2026-09-17.md` and `digests/2026-09-21.md`.
+- **Pipeline Expansion**: Expanded active project pipeline in `TRACKER.md` to 16 high-conviction targets.
+
+### [2026-09-18]
+- **KB RAG Engine Integration (`TASK-RPL-04`):**
+  - Integrated `kb-rag-skill` with local vector search + Gemini LLM command-line interface (`kb ask --model gemini`).
+  - Added source attribution and automated knowledge updates to source Markdown files.
+- **Architecture Decision Record (`ADR-009`):**
+  - Published `ADR-009-owner-only-email-fusionauth-sync.md` documenting atomic FA-first email synchronization and hard owner-only role gates.
+  - Indexed `ADR-009` in [`knowledgebase/01-projects/adr/README.md`](/home/shafikul/Documents/coding/research-playground-loop/knowledgebase/01-projects/adr/README.md).
+- **Multi-Workspace Knowledge Synchronization:**
+  - Automated knowledgebase synchronization across `clinic-app`, `research-playground-loop`, and `musicloopy-backend`.
+
 - **Discovery Cycle E (eBPF & Data Movement)**: Evaluated Cilium (Score: 96, Go, Kubernetes NetworkPolicies, eBPF) and Airbyte (Score: 94, Python, Docker, Kubernetes, database connectors).
 - **Enterprise Pipeline Expansion**: Expanded active project pipeline in [`TRACKER.md`](/home/shafikul/Documents/opensource_project/TRACKER.md) to 10 high-conviction commercial open-source targets.
 - **Cron Scheduler Liveness**: Re-activated background 9:00 PM discovery daemon (`task-229`) following server restart.
