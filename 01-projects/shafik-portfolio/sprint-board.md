@@ -79,9 +79,11 @@
     - Resolved 404 error on `https://shafiktanbir.com/blog/` by creating standalone Server Component `v2/src/app/blog/page.js` with OpenGraph/canonical metadata and interactive client renderer `BlogPageClient.js`.
     - Enhanced `v2/src/app/sitemap.js` with dynamic indexing for `/blog`, `/book`, and all 13 technical articles from `STATIC_BLOGS` for SEO and LLM search discovery.
     - Enforced `--webpack` build flag in `v2/package.json` for deterministic, error-free Next.js 16 production compilation and pushed to GitHub `main` (`15e5016`) for Vercel auto-deployment.
-  - **ADR-018 Published**:
-    - Documented Flagship Production Architectures Release, Inbound Conversion Bridges, and SEO Blog Routing in `knowledgebase/01-projects/adr/ADR-018-flagship-authority-systems-and-seo-blog-routing.md`.
+  - **Explore Solution Navigation Fix**:
+    - Fixed "Explore Solution" CTA button in `About.js` by propagating `setActivePage` down from `renderSection()` in `app/page.js`, `app/blog/BlogPageClient.js`, and `app/book/page.js`.
+    - Eliminated broken synthetic `popstate` dispatch; clicking "Explore Solution" now directly transitions React state to the `book` tab, synchronizes the URL query parameter (`/?tab=book`), and smoothly scrolls to the booking form.
   - Eradicated tutorial relics across all projects and documentation.
+
 
 
 ### 2026-10-02
