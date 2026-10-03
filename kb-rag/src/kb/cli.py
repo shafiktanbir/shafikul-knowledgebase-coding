@@ -86,6 +86,17 @@ def cmd_index(model: str, json_output: bool) -> None:
 
     index, index_dir = _get_index(config, model)
 
+    # Check guardrails: if metadata exists, ensure model matches
+    existing_meta = read_metadata(index_dir)
+    if existing_meta:
+        existing_model = existing_meta.get("embedding_model")
+        if existing_model and existing_model != provider.get_model_name():
+            console.print(f"[bold red]Guardrail Error:[/] You are trying to use model '{provider.get_model_name()}' "
+                          f"but this index was built with '{existing_model}'.")
+            console.print("Mixing different embedding models will corrupt the vector space.")
+            console.print(f"Please use '--model {existing_model}' or run 'kb rebuild' to start over.")
+            sys.exit(1)
+
     # Write metadata.json before indexing
     write_metadata(
         index_dir=index_dir,
