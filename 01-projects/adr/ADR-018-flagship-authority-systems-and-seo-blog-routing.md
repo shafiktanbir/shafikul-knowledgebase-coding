@@ -46,6 +46,11 @@ Upgraded and published 5 public repositories with sequential 2025 commit histori
 * **Enhanced XML Sitemap (`app/sitemap.js`):** Dynamically generates sitemap entries for `/blog`, `/book`, and all 13 technical case studies from `STATIC_BLOGS`.
 * **Standardized Build Script:** Updated `v2/package.json` to `"build": "rm -rf .next && next build --webpack"` to ensure reliable Google font compilation.
 
+### 4. Interactive State Propagation for Consultation CTAs (`About.js`)
+* **Propagated State Callback:** Passed `setActivePage={setActivePage}` from `renderSection()` across `app/page.js`, `app/blog/BlogPageClient.js`, and `app/book/page.js` into child view components.
+* **Eliminated Broken Synthetic Events:** Removed non-functioning `window.dispatchEvent(new Event("popstate"))` calls on the "Explore Solution" CTA cards, replacing with direct `setActivePage("book")` state mutation, URL query synchronization (`/?tab=book`), and smooth scroll orchestration.
+
+
 ---
 
 ## 📊 Consequences & Validation
